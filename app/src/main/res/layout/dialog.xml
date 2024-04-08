@@ -11,10 +11,11 @@
         android:padding="8dp">
 
         <TextView
+            android:id="@+id/titleDialog"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="Thêm lớp"
+            android:text="Tiêu đề"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -25,18 +26,18 @@
             android:background="#000000" />
 
         <EditText
-            android:id="@+id/class_edt"
+            android:id="@+id/edt01"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:hint="Tên lớp" />
+            android:hint="edt01" />
 
         <EditText
-            android:id="@+id/subject_edt"
+            android:id="@+id/edt02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:hint="Tên môn học" />
+            android:hint="edt01" />
 
         <RelativeLayout
             android:layout_width="match_parent"

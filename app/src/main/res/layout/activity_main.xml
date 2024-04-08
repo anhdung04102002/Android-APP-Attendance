@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
+<include
+    android:id="@+id/toolbarMain"
+    layout="@layout/toolbar"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_main"
         android:layout_width="wrap_content"
@@ -16,6 +18,7 @@
         android:src="@drawable/baseline_add_24"
         />
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/toolbarMain"
         android:id="@+id/recycleView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
