@@ -6,7 +6,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +33,19 @@ public class MainActivity extends AppCompatActivity {
      EditText class_edt;
      EditText subject_edt;
      Toolbar toolbar;
+    DbHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new DbHelper(this);
+
         fab = findViewById(R.id.fab_main);
-        fab.setOnClickListener(v -> showDialog());
+        fab.setOnClickListener(v -> showDialog()); // viết vầy để xử lý điều kiện click trực tiếp
+
+
+        loadData(); 
 
         recyclerView = findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true); //tối ưu hóa các mục khi kích thước không đổi
@@ -49,6 +57,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(classAdapter);
         classAdapter.setOnItemClickListener(position -> gotoItemActivity(position));
         setToolbar();
+    }
+
+    private void loadData() {
+        Cursor cursor = dbHelper.getClassTable() ;
+        classItems.clear();
+        while (cursor.moveToNext()) {
+              int id = cursor.getInt(cursor.getColumnIndex(DbHelper.C_ID));
+              String className =  cursor.getString(cursor.getColumnIndex(DbHelper.CLASS_NAME_KEY));
+             String subjectName =  cursor.getString(cursor.getColumnIndex(DbHelper.SUBJECT_NAME_KEY));
+
+            classItems.add(new ClassItem(id,className,subjectName));
+
+
+        }
     }
 
     private void setToolbar() {
@@ -79,8 +101,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addClass(String classname,String subjectname) {
-
-        classItems.add(new ClassItem(classname,subjectname));
+        long  cid = dbHelper.addClass(classname,subjectname);
+        ClassItem classItem = new ClassItem(cid,classname,subjectname);
+        classItems.add(classItem);
         classAdapter.notifyDataSetChanged();
+
+
     }
 }
