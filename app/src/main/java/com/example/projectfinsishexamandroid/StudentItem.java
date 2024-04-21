@@ -1,21 +1,31 @@
 package com.example.projectfinsishexamandroid;
 
 public class StudentItem {
-    private String roll;
+    private long sid;
+    private int roll;
     private String name;
     private String status;
 
-    public StudentItem(String roll, String name) {
+    public StudentItem(long sid,int roll, String name) {
+        this.sid = sid;
         this.roll = roll;
         this.name = name;
         status = "";
     }
 
-    public String getRoll() {
+    public long getSid() {
+        return sid;
+    }
+
+    public void setSid(long sid) {
+        this.sid = sid;
+    }
+
+    public int getRoll() {
         return roll;
     }
 
-    public void setRoll(String roll) {
+    public void setRoll(int roll) {
         this.roll = roll;
     }
 
