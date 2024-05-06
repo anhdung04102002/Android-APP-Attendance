@@ -27,22 +27,28 @@ public class StudentActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<StudentItem> studentItems = new ArrayList<>();
     private DbHelper dbHelper;
-    private int cid;
+    private long cid;
+    private MyCalendar calendar;
+    private TextView subtitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
-
+        calendar = new MyCalendar();
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
 
         className = intent.getStringExtra("className");
         subjectName = intent.getStringExtra("subjectName");
         position = intent.getIntExtra("position", -1);
-        cid = intent.getIntExtra("cid", -1);
+        cid = intent.getLongExtra("cid", -1);
+
+
         setToolbar();
         loadData();
+
 
         recyclerView = findViewById(R.id.student_recycler);
         recyclerView.setHasFixedSize(true);
@@ -51,7 +57,7 @@ public class StudentActivity extends AppCompatActivity {
         studentAdapter = new StudentAdapter(studentItems, this);
         recyclerView.setAdapter(studentAdapter);
         studentAdapter.setOnItemClickListener(position1 -> changeStatus(position1));
-
+        loadStatusData();
     }
 
     private void loadData() {
@@ -66,35 +72,79 @@ public class StudentActivity extends AppCompatActivity {
         cursor.close();
     }
 
-    private void changeStatus(int position1) {
+        private void changeStatus(int position1) {
         String status = studentItems.get(position1).getStatus();
         if (status.equals("x")) status = "Vắng";
         else status = "x";
         studentItems.get(position1).setStatus(status);
         studentAdapter.notifyItemChanged(position1);
     }
+//    private void changeStatus(int position1) {
+//        String status = studentItems.get(position1).getStatus();
+//        if (status.equals("x")) status = "Vắng";
+//        else status = "x";
+//        studentItems.get(position1).setStatus(status);
+//        dbHelper.updateStatus(studentItems.get(position1).getSid(), calendar.getDate(), status);
+//        studentAdapter.notifyItemChanged(position1);
+//    }
 
     private void setToolbar() {
         toolbar = findViewById(R.id.toolbar);
         TextView title = toolbar.findViewById(R.id.title_toolbar);
-        TextView subtitle = toolbar.findViewById(R.id.subtitle_toolbar);
+        subtitle = toolbar.findViewById(R.id.subtitle_toolbar);
         ImageButton back = toolbar.findViewById(R.id.back);
         ImageButton save = toolbar.findViewById(R.id.save);
+        save.setOnClickListener(v -> saveStatus()); // lưu trạng thái
 
         title.setText(className);
-        subtitle.setText(subjectName);
+        subtitle.setText(subjectName + "|" + calendar.getDate());
 
         back.setOnClickListener(v -> onBackPressed());
         toolbar.inflateMenu(R.menu.student_menu); //đặt menu trong toolbar
         toolbar.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem));
     }
 
+    private void saveStatus() {
+        for (StudentItem studentItem : studentItems) {
+            String status = studentItem.getStatus();
+            if (!status.equals("x")) status = "Vắng";
+            long value = dbHelper.addStatus(studentItem.getSid(), cid,calendar.getDate(), status);
+            if (value == -1)
+                dbHelper.updateStatus(studentItem.getSid(), calendar.getDate(), status);
+        }
+    }
+
+    private void loadStatusData() {
+        for (StudentItem studentItem : studentItems) {
+            String status = dbHelper.getStatus(studentItem.getSid(), calendar.getDate());
+            if (status != null) studentItem.setStatus(status);
+            else studentItem.setStatus("");
+        }
+        studentAdapter.notifyDataSetChanged();
+    }
+
     private boolean onMenuItemClick(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.add_student) {
             showAddStudentDialog();
+        } else if (menuItem.getItemId() == R.id.show_calendar) {
+            showCalendar();
         }
 
         return true;
+    }
+
+    // show form chọn ngày
+    private void showCalendar() {
+        MyCalendar calendar = new MyCalendar();
+        calendar.show(getSupportFragmentManager(), ""); // đặt sự tương tác của fragment là chuỗi rỗng (không quan tâm)
+        calendar.setOnCalendarOnClickListener(this::onCalendarOkClicked); // gọi đến phương thức(khi nhấn ok sẽ hành động tiếp)
+    }
+
+    private void onCalendarOkClicked(int year, int month, int day) {
+
+        calendar.setDate(year, month, day);
+        subtitle.setText(subjectName + " | " + calendar.getDate());
+        loadStatusData();
     }
 
     private void showAddStudentDialog() {
@@ -124,13 +174,13 @@ public class StudentActivity extends AppCompatActivity {
     }
 
     private void showUpdateStudentDialog(int position) {
-        MyDialog dialog = new MyDialog(studentItems.get(position).getRoll(),studentItems.get(position).getName());
-        dialog.show(getSupportFragmentManager(),MyDialog.STUDENT_UPDATE_DIALOG);
-        dialog.setListener((roll_string,name)->updateStudent(position,name));
+        MyDialog dialog = new MyDialog(studentItems.get(position).getRoll(), studentItems.get(position).getName());
+        dialog.show(getSupportFragmentManager(), MyDialog.STUDENT_UPDATE_DIALOG);
+        dialog.setListener((roll_string, name) -> updateStudent(position, name));
     }
 
-    private void updateStudent(int position,  String name) {
-        dbHelper.updateStudent(studentItems.get(position).getSid(),name);
+    private void updateStudent(int position, String name) {
+        dbHelper.updateStudent(studentItems.get(position).getSid(), name);
         studentItems.get(position).setName(name);
         studentAdapter.notifyItemChanged(position);
     }
