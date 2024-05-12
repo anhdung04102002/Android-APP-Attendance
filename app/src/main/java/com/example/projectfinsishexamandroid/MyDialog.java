@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,8 +79,12 @@ public class MyDialog extends DialogFragment {
             String roll = roll_edt.getText().toString();
             String name = name_edt.getText().toString();
 
-            listener.onClick(roll,name);
-            dismiss();
+            if(roll.isEmpty() || name.isEmpty()) {
+                Toast.makeText(getActivity(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+            } else {
+                roll_edt.setText(String.valueOf(Integer.parseInt(roll)));
+                listener.onClick(roll,name);
+            }
         });
         return builder.create();
     }
@@ -105,8 +110,12 @@ public class MyDialog extends DialogFragment {
         add.setOnClickListener(v -> {
             String classname = class_edt.getText().toString();
             String subjectname = subject_edt.getText().toString();
-            listener.onClick(classname,subjectname);
-            dismiss();;
+            if(classname.isEmpty() || subjectname.isEmpty()) {
+                Toast.makeText(getActivity(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+            } else {
+                listener.onClick(classname,subjectname);
+                dismiss();
+            }
         });
         return builder.create();
 
@@ -132,8 +141,14 @@ public class MyDialog extends DialogFragment {
         add.setOnClickListener(v -> {
             String roll = roll_edt.getText().toString();
             String name = name_edt.getText().toString();
-            roll_edt.setText(String.valueOf(Integer.parseInt(roll)+1));
-            listener.onClick(roll,name);
+//            roll_edt.setText(String.valueOf(Integer.parseInt(roll)+1));
+//            listener.onClick(roll,name);
+            if(roll.isEmpty() || name.isEmpty()) {
+                Toast.makeText(getActivity(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+            } else {
+                roll_edt.setText(String.valueOf(Integer.parseInt(roll)+1));
+                listener.onClick(roll,name);
+            }
         });
         return builder.create();
     }
@@ -159,8 +174,12 @@ public class MyDialog extends DialogFragment {
         add.setOnClickListener(v -> {
             String classname = class_edt.getText().toString();
             String subjectname = subject_edt.getText().toString();
-            listener.onClick(classname,subjectname);
-            dismiss();;
+            if(classname.isEmpty() || subjectname.isEmpty()) {
+                Toast.makeText(getActivity(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+            } else {
+                listener.onClick(classname,subjectname);
+                dismiss();
+            }
         });
         return builder.create();
     }

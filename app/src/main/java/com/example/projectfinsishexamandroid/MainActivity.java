@@ -138,9 +138,22 @@ public class MainActivity extends AppCompatActivity {
         classAdapter.notifyItemChanged(position);
     }
 
-    private void deleteClass(int position) {
-        dbHelper.deleteClass(classItems.get(position).getCid());
-        classItems.remove(position); // ngăn xuất hiện trên giao diện
-        classAdapter.notifyItemRemoved(position);
-    }
+//    private void deleteClass(int position) {
+//        dbHelper.deleteClass(classItems.get(position).getCid());
+//        classItems.remove(position); // ngăn xuất hiện trên giao diện
+//        classAdapter.notifyItemRemoved(position);
+//    }
+private void deleteClass(int position) {
+    new AlertDialog.Builder(this)
+            .setTitle("Xác nhận xóa")
+            .setMessage("Bạn có chắc chắn muốn xóa lớp học này?")
+            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                dbHelper.deleteClass(classItems.get(position).getCid());
+                classItems.remove(position); // ngăn xuất hiện trên giao diện
+                classAdapter.notifyItemRemoved(position);
+            })
+            .setNegativeButton(android.R.string.no, null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
+}
 }

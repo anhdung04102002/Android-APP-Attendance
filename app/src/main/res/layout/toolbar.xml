@@ -48,14 +48,15 @@
                     android:textSize="15dp"
                     android:textStyle="bold" />
             </LinearLayout>
+
             <ImageButton
                 android:id="@+id/save"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/icon_luu"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icon_luu" />
 
 
         </RelativeLayout>

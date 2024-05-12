@@ -97,7 +97,7 @@ class DbHelper extends SQLiteOpenHelper {
 
     long addClass(String className, String subjectName) {
         SQLiteDatabase database = this.getWritableDatabase(); // thực hiện hành động
-        ContentValues values = new ContentValues();
+        ContentValues values = new ContentValues(); // xác định cặp giá trị của cột và giá trị tương ứng
         values.put(CLASS_NAME_KEY, className);
         values.put(SUBJECT_NAME_KEY, subjectName);
 
@@ -171,10 +171,15 @@ class DbHelper extends SQLiteOpenHelper {
     String getStatus(long sid, String date) {
         String status = null;
         SQLiteDatabase database = this.getReadableDatabase();
-        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
+        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid; // điều kiện
         Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
         if (cursor.moveToFirst())
             status = cursor.getString(cursor.getColumnIndex(STATUS_KEY));
         return status;
+    }
+    Cursor getDistincMonths(long cid) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        //sql vị trí bắt đầu đánh số từ 1
+        return database.query( STATUS_TABLE_NAME, new String[]{DATE_KEY}, C_ID + "=" + cid, null, "substr(" + DATE_KEY + ",4,7)", null, null);
     }
 }

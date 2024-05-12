@@ -1,6 +1,7 @@
 package com.example.projectfinsishexamandroid;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -128,9 +129,36 @@ public class StudentActivity extends AppCompatActivity {
             showAddStudentDialog();
         } else if (menuItem.getItemId() == R.id.show_calendar) {
             showCalendar();
+        } else if (menuItem.getItemId() == R.id.show_attendance) {
+            showSheetList();
+        }
+        return true;
+    }
+
+    private void showSheetList() {
+        long[] idarrays = new long[studentItems.size()];
+        String [] nameArrays = new String[studentItems.size()];
+        int [] rollarrays = new int[studentItems.size()];
+
+        for(int i = 0; i < idarrays.length ; i++) {
+            idarrays[i] = studentItems.get(i).getSid();
         }
 
-        return true;
+        for (int i = 0; i < rollarrays.length; i++) {
+            rollarrays[i] = studentItems.get(i).getRoll();
+        }
+
+
+        for(int i = 0; i < nameArrays.length ; i++) {
+            nameArrays[i] = studentItems.get(i).getName();
+        }
+
+        Intent intent = new Intent(this, SheetListActivity.class);
+        intent.putExtra("cid", cid);
+        intent.putExtra("idArray", idarrays);
+        intent.putExtra("nameArray", nameArrays);
+        intent.putExtra("rollArray", rollarrays);
+        startActivity(intent);
     }
 
     // show form chọn ngày
@@ -185,9 +213,22 @@ public class StudentActivity extends AppCompatActivity {
         studentAdapter.notifyItemChanged(position);
     }
 
-    private void deleteStudent(int position) {
-        dbHelper.deleteStudent(studentItems.get(position).getSid());
-        studentItems.remove(position);
-        studentAdapter.notifyItemRemoved(position);
-    }
+//    private void deleteStudent(int position) {
+//        dbHelper.deleteStudent(studentItems.get(position).getSid());
+//        studentItems.remove(position);
+//        studentAdapter.notifyItemRemoved(position);
+//    }
+private void deleteStudent(int position) {
+    new AlertDialog.Builder(this)
+            .setTitle("Xác nhận xóa")
+            .setMessage("Bạn có chắc chắn muốn xóa sinh viên này?")
+            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                dbHelper.deleteStudent(studentItems.get(position).getSid());
+                studentItems.remove(position); // ngăn xuất hiện trên giao diện
+                studentAdapter.notifyItemRemoved(position);
+            })
+            .setNegativeButton(android.R.string.no, null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
+}
 }
